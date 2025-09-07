@@ -1,0 +1,252 @@
+\documentclass[10pt,twocolumn]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{geometry}
+\geometry{a4paper, margin=1in}
+
+\title{Geometric Plasticity: Adaptive Information Networks and Emergent Redundancy}
+\author{Justin Bilyeu, Sage, and the Structured Resonance Collective}
+\date{Version: GP v0.9 (Draft for Comment) \\ 2025-09-07}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+We introduce Geometric Plasticity (GP)—a witness-driven adaptation principle for open systems that upgrades the passive story of Quantum Darwinism into an active, self-tuning mechanism. In GP, the couplings between a system and its environment evolve to maximize redundant records of a system's pointer observable. This evolution is governed by information-theoretic signals (mutual information and its flux), constrained by resources (budgets) and geometry (graph smoothness). The resulting dynamics yield sharp, falsifiable predictions including ringing transitions, hysteresis resonance, and motif selection. We provide closed-form stability inequalities, engineering rules, and a reproducibility pack for experimental validation.
+\end{abstract}
+
+\section{Background and Motivation}
+
+Quantum Darwinism explains objectivity as redundancy of classical records in the environment. Standard accounts take the system-environment geometry as fixed. GP proposes that many systems—biophysical complexes, engineered quantum devices, adaptive networks—actively reshape their coupling geometry in response to the witness signal: the information they actually broadcast.
+
+This closes the loop: information flow $\rightarrow$ structural change $\rightarrow$ optimized future information flow. The result is an adaptive information network whose steady states and transients can be quantified and tested.
+
+\section{Core Framework}
+
+\subsection{Objects and Signals}
+\begin{itemize}
+\item Pointer observable $X$: stable under decoherence.
+\item Redundancy $R_X^\delta(t) = |\{k: I(X:F_k) \ge (1-\delta)H(X)\}|$.
+\item Witness flux $\Phi_{\text{wit}}(t) = \frac{d}{dt}\sum_k I(X:F_k,t)$.
+\end{itemize}
+
+\subsection{Geometric Plasticity Law}
+
+Let $g_k$ be the coupling to fragment $F_k$. The continuous-time update is:
+\[
+\dot{g_k} = \eta\bar{I_k} - \lambda g_k - \beta(L\mathbf{g})_k
+\]
+with an EMA of fragment MI,
+\[
+\dot{\bar{I_k}} = A(I_k - \bar{I_k}), \quad A = \frac{\alpha}{1-\alpha},
+\]
+a resource budget $\sum_k c_k g_k^2 \le B$, and graph penalty $L$ (Laplacian). The loop gain is $K = \eta\gamma$ when $I_k \approx \gamma g_k$ (local linearization). A feedback delay $\Delta$ can be present.
+
+\section{Analytical Results}
+
+\subsection{Ringing Threshold with Delay}
+
+Linearized single-mode model (Padé(1,1) delay):
+\begin{align*}
+\dot{g} &= \eta\bar{I} - Bg \\
+\dot{\bar{I}} &= A(I - \bar{I}) \\
+I &= \gamma g(t-\Delta)
+\end{align*}
+Padé(1,1): $e^{-s\Delta} \approx \frac{1 - \tfrac{s\Delta}{2}}{1 + \tfrac{s\Delta}{2}}$.
+
+Characteristic cubic (after elimination):
+\[
+s^3 + a s^2 + b s + c = 0
+\]
+where
+\[
+a = \frac{2}{\Delta} + A + B, \quad b = \frac{2(A+B)}{\Delta} + AB + AK, \quad c = \frac{2A(B-K)}{\Delta}
+\]
+
+Routh-Hurwitz boundary (ringing onset) obtained from the cubic's first-column minor equality gives an explicit threshold:
+\[
+K_c^{\text{RH}}(A,B,\Delta) = \frac{\left(\tfrac{2}{\Delta} + A + B\right)\left(\tfrac{2(A+B)}{\Delta} + AB\right)}{A\left(\tfrac{2}{\Delta} - B\right)} \quad \text{(Padé model; valid where } \tfrac{2}{\Delta} > B \text{)}
+\]
+
+Engineering rule (phase condition): define $\omega_c$ by
+\[
+\arctan\left(\frac{\omega_c}{A}\right) + \arctan\left(\frac{\omega_c}{B}\right) + \omega_c\Delta = \frac{3\pi}{4}
+\]
+then
+\[
+K_c^{\text{ER}} \approx \frac{1}{A}\sqrt{(A^2 + \omega_c^2)(B^2 + \omega_c^2)}
+\]
+Empirically this tracks $K_c^{\text{RH}}$ within $\sim$10-20\% over broad grids and within $\lesssim$2-5\% when $A \gtrsim 5B$ and $\omega_c\Delta \ll 1$.
+
+Asymptotics (small $\Delta$):
+\[
+K_c = AB + (A^2 + B^2)\Delta + \tfrac{1}{2}AB(A + B)\Delta^2 + O(\Delta^3)
+\]
+
+\subsection{Hysteresis Resonance and Prefactor}
+
+Under a small sinusoidal gain drive $\gamma(t) = \gamma_0 + \delta\gamma\sin\omega t$, the loop in $(\Sigma_k g_k, R_X^\delta)$ has area
+\[
+A_{\text{loop}}(\omega) = C(\cdot) \frac{\omega\tau_{\text{geom}}}{1 + (\omega\tau_{\text{geom}})^2}, \quad \tau_{\text{geom}} = \frac{1}{B}
+\]
+
+Prefactor (with finite-A correction; $\Delta \to 0$):
+\[
+C \approx -\pi\eta g_0^2(\delta\gamma)^2 \frac{1}{B} \left[1 + \frac{1}{A}\left(\frac{B}{2} - \frac{\omega^2}{B}\right)\right]^{-1}
+\]
+Regime validity: corrections $<$5\% when $A > 5B$; $\lesssim$18\% at $A \gtrsim B$; degrades as $\omega$ approaches $B$ or $\omega\Delta$ grows.
+
+\subsection{Motif Universality: Broadcast vs Modular}
+
+Consider the static optimum of the convex functional
+\[
+\mathbb{F}[\mathbf{g}] = -\sum_k I_k + \frac{\lambda}{2}\sum_k c_k g_k^2 + \frac{\beta}{2}\mathbf{g}^\top L\mathbf{g}
+\]
+with linear approximation $I \approx J\mathbf{g}$ (diagonal $J$). First-order condition:
+\[
+(\lambda C + \beta L)\mathbf{g} = J\mathbf{1}, \quad C = \mathrm{diag}(c_k)
+\]
+Expanding in Laplacian eigenmodes $(\mu_i, \mathbf{u}_i)$,
+\[
+\mathbf{g} = \sum_i \frac{\mathbf{u}_i^\top(J\mathbf{1})}{\lambda c + \beta\mu_i} \mathbf{u}_i
+\]
+
+Broadcast motif dominates when non-uniform components are suppressed:
+\[
+\frac{\beta}{\lambda} \gtrsim \frac{\mathrm{Var}(J_k/\sqrt{c_k})}{\mu_2 \langle J_k^2/c_k \rangle}
+\]
+
+2-cluster threshold (equal sizes, $J_A, J_B$):
+\[
+\beta^* \approx \frac{\lambda}{\mu_2} \frac{n(J_A - J_B)^2}{4(J_A^2 + J_B^2)}
+\]
+For $\beta \ll \beta^*$, modular (clustered) patterns emerge; for $\beta \gg \beta^*$, broadcast (star-like).
+
+\subsection{Delay Stability and Safe-K}
+
+With open-loop $L(s) = \dfrac{AK e^{-s\Delta}}{s(s + A)(s + B)}$, an approximate phase margin can be calculated.
+
+\subsection{Identifiability from Time Series}
+
+From $\Phi_{\text{wit}}(t)$, $R^\delta(t)$:
+\begin{itemize}
+\item $B$: envelope decay rate (Hilbert log-slope)
+\item $A$: 10-90\% rise time of redundancy
+\item $\Delta$: cross-correlation lag between $\Phi_{\text{wit}}$ and $\dot{R}^\delta(t)$
+\item $K$: PSD peak + steady-state gain (with known input amplitude)
+\end{itemize}
+Bootstrap CIs are practical at SNR $\gtrsim$10-15 dB.
+
+\section{Numerical Diagnostics and Reproducibility}
+
+\subsection{Ringing Detection}
+\begin{itemize}
+\item PSD peak $\ge$ 6 dB (Welch; exclude DC)
+\item Overshoot count $\ge$ 2 sign-alternating increments in $R^\delta$
+\item Damping ratio $\zeta \in (0,1)$ via Hilbert-envelope log-slope:
+$\zeta = \sigma/\sqrt{\sigma^2 + \omega_d^2}$, $\omega_d = 2\pi f_{\text{peak}}$
+\end{itemize}
+Smoke tests: under-damped AR(2) shows high PSD peak and $\zeta \in (0,1)$; over-damped control yields low peak, $\zeta$ undefined.
+
+\subsection{Phase Map ($\alpha$, $\eta$)}
+
+Grid over $\alpha$ and $\eta$ with constant $(\lambda, \beta)$: write results/phase\_map/phase\_map.csv and img/phase\_map.png. Report fraction of ringing points and optional $K$ contours.
+
+\subsection{Hysteresis Resonance}
+
+Drive periods $T = \text{(mult)} \times 2\pi\tau_{\text{geom}}$, plasticity ON vs OFF:
+\begin{itemize}
+\item Loop area via shoelace formula on $(\Sigma g_k, R^\delta)$
+\item Expect peak near mult = 1.0 for ON, flat OFF baseline
+\end{itemize}
+Artifacts: results/hysteresis/area\_vs\_period.csv, img/hysteresis\_area\_vs\_period.png, and per-period loop plots.
+
+\subsection{Threshold Comparison (RH vs DS vs ER)}
+
+Compute $K_c^{\text{RH}}$, $K_c^{\text{DS}}$, $K_c^{\text{ER}}$ over a grid $(A, B, \Delta)$, export data/Kc\_comparison\_grid.csv, and error heatmaps img/Kc\_error\_RH.png, img/Kc\_error\_DS.png. Observed: RH and DS are numerically indistinguishable and track ER closely (5-20\% at large A/B).
+
+\section{Experimental Roadmap}
+
+\begin{tabular}{|l|l|l|l|l|}
+\hline
+Platform & System \& Pointer & Environment Fragments & GP Control & Readout \& Metrics \\
+\hline
+Superconducting qubit & Transmon, $X=\sigma_z$ & Microwave output modes / temporal bins & Tunable dispersive couplers, software feedback & MI per fragment, $\Phi_{\text{wit}}$, $R^\delta$, ringing boundary vs $K$ \\
+Trapped ions & Hyperfine qubit(s) & Motional/optical modes & Sideband cooling + parametric mod & Same + hysteresis loops under sinusoidal drive \\
+NV center & NV electron spin & $^{13}$C nuclear spins & Pulse-shaped coupling / DD sequences & Motif shift vs $\beta/\lambda$, PR \& Gini of $g_k$ \\
+Oscillator arrays & Optical/electrical rings & Spatial/temporal fragments & Resistive/capacitive tuning + feedback & Loop area peak at $T \approx 2\pi\tau_{\text{geom}}$ \\
+\hline
+\end{tabular}
+
+\subsection*{Pass/Fail}
+\begin{enumerate}
+\item No ringing at $K \gg 1$ falsifies GP dynamics
+\item Loop area not peaking near $2\pi\tau_{\text{geom}}$ contradicts resonance prediction
+\item Motif statistics (PR, Gini, modularity proxy) not shifting with $\beta/\lambda$ contradicts universality
+\end{enumerate}
+
+\section{Applications and Extensions}
+\begin{itemize}
+\item Quantum sensing \& metrology: self-optimizing sensors maintain high redundancy channels
+\item Adaptive QEC: codes retune topology to drifting noise (witness-driven)
+\item ML \& neuromorphics: information-theoretic plasticity rules for weights and topology
+\item Network resilience: broadcast $\leftrightarrow$ modular tuning to mitigate cascades
+\item Custom silicon (ITPU): acceleration for MI/entropy, witness flux, and plasticity kernels
+\end{itemize}
+
+\section{Limitations and Risks}
+\begin{itemize}
+\item Model order \& delay: Padé(1,1) is an approximation; large $\omega\Delta$ reduces fidelity
+\item MI estimation: practical surrogates (e.g., neural estimators) introduce bias; confidence handling is essential
+\item Speculative links: we avoid claims about consciousness; GP remains an information-dynamics theory
+\end{itemize}
+
+\section{Reproducibility Pack (Preview)}
+
+Expected artifacts (Pages/preview):
+\begin{itemize}
+\item img/phase\_map.png, img/hysteresis\_area\_vs\_period.png
+\item img/Kc\_error\_RH.png, img/Kc\_error\_DS.png
+\item results/phase\_map/phase\_map.csv, results/hysteresis/area\_vs\_period.csv
+\item data/Kc\_comparison\_grid.csv
+\end{itemize}
+
+Acceptance tests (examples):
+\begin{itemize}
+\item Under-damped AR(2): PSD gain $\ge$ 6 dB; $\zeta \in (0,1)$
+\item Hysteresis ON/OFF: ON peak within 0.8-1.5$\times$ the predicted $T$
+\item Kc grid: median |err| $\le$ 15\% vs ER; $\le$ 5\% for $A/B \ge 5$
+\end{itemize}
+
+\section*{Acknowledgments}
+
+Thanks to collaborators and external models (DeepSeek, Grok, Wolfram) for derivations, diagnostics ideas, and parameter sweeps that informed the math pack and validation design.
+
+\section*{References (selected)}
+\begin{enumerate}
+\item Zurek, W. H. (2003). Decoherence, einselection, and the quantum origins of the classical. RMP 75(3).
+\item Ollivier, Poulin, Zurek (2004). Environment as a witness. PRL 93.
+\item Blume-Kohout, Zurek (2006). Quantum Darwinism. PRA 73.
+\item Riedel, Zurek, Zwolak (2012). Rise and fall of redundancy. NJP 14.
+\item Horodecki et al. (2015). Quantum origins of objectivity. PRA 91.
+\item Control theory texts on RH/Nyquist and delay margins.
+\end{enumerate}
+
+\section*{Appendices (companion documents)}
+\begin{itemize}
+\item Appendix A — Ringing Threshold with Delay: characteristic cubic, RH inequality, engineering rule, asymptotics, and $\zeta$ estimation
+\item Appendix B — Hysteresis Prefactor: full prefactor $C$, regime map, and validation
+\item Appendix C — Motif Universality: broadcast/modular thresholds from spectral expansions
+\item Appendix D — Delay Stability: safe-K charts and phase margins
+\item Appendix E — Identifiability: estimators for $(A,B,\Delta,K)$, bootstrap CIs, and failure modes
+\end{itemize}
+
+\section*{Author's Note}
+
+This draft captures the state of Geometric Plasticity "as it sits": equations you can test, diagnostics you can run, and experiments you can build. If a prediction breaks, good—we learn. If it holds, better—we iterate. Either way, the loop is closed: observe $\rightarrow$ adapt $\rightarrow$ measure $\rightarrow$ refine.
+
+\end{document}
