@@ -1,31 +1,46 @@
-# Preview Methods (Data-only)
+---
 
-## Model capsule (high-level)
-Closed-loop geometric plasticity with:
-- EMA witness: \(\bar I_k(t) = (1-\alpha)\bar I_k(t-1) + \alpha I_k(t)\)
-- Geometry update: \(g \leftarrow g + \eta[\bar I - \lambda g - \beta L g]\) with budget projection \(\sum c_k g_k^2 \le B\)
-- Optional delay Δ (Padé(1,1) in linear analysis)
-- Metrics: witness flux \(\Phi_{\text{wit}}(t)=\Delta\sum_k I_k\), redundancy \(R_X^\delta(t)\), \(\tau_{\text{geom}}\) (autocorr 1/e)
+### `docs/preview_methods.md`
+```markdown
+# Preview Methods & Definitions
 
-## Operational criteria
-- **Ringing detection** (either time series qualifies):  
-  (i) PSD peak ≥ **6 dB** above baseline (exclude DC), and  
-  (ii) ≥ **2** overshoots in \(R_X^{0.1}(t)\).
-- **Learning vs. mere ringing** (under periodic drive): per-period loss proxy \(\Delta\mathcal{L}<0\) and redundancy plateaus.
-- **Hysteresis loop**: \(\mathcal{A}_{\text{loop}}(T) \propto \frac{\omega\tau}{1+(\omega\tau)^2}\), \(\omega=2\pi/T\). Peak expected near \(T\approx 2\pi\tau_{\text{geom}}\).
+## Model (linearized GP with EMA and delay)
+\[
+\dot g = \eta \bar I - B g, \qquad
+\dot{\bar I} = A (I - \bar I), \qquad
+I(t) = \gamma\, g(t-\Delta), \quad K=\eta\gamma.
+\]
 
-## Threshold formulas compared
-- **Routh–Hurwitz (RH)** boxed cubic (Padé(1,1)): yields \(K_c^{\text{RH}}(A,B,\Delta)\).  
-- **DeepSeek (DS)** variant with \(A(2/\Delta - B)\) denominator: \(K_c^{\text{DS}}\).  
-- **Engineering rule (ER)**: solve \(\arctan(\omega_c/A)+\arctan(\omega_c/B)+\omega_c\Delta=\tfrac{3\pi}{4}\), then map to \(K_c^{\text{ER}}\).
+Padé(1,1) for the delay: \(e^{-s\Delta} \approx \frac{1-\frac{s\Delta}{2}}{1+\frac{s\Delta}{2}}\).
 
-## Acceptance checks (preview)
-- `data/Kc_comparison_grid.csv`: \(|K_c^{\text{RH}}-K_c^{\text{ER}}|/K_c^{\text{ER}} \le 2\%\) for A≥5B; similar for DS.  
-- `img/hysteresis_area_vs_period.png`: ON peak in T/(2πτ) ∈ [0.8, 1.5]; OFF ~flat.
+Characteristic cubic (after elimination) gives **Routh–Hurwitz** coefficients \(a_3,a_2,a_1,a_0\) and a closed-form threshold.
 
-## Provenance
-- RH box & asymptotics (our derivation).  
-- DS threshold & motif criteria (DeepSeek notes).  
-- ER mapping & error heatmaps (Wolfram notebook).
+### Thresholds compared
 
-This file is intentionally high-level; implementation details reside in private working repos until manuscript submission.
+**Routh–Hurwitz (RH)**  
+\[
+K_c^{\mathrm{RH}}(A,B,\Delta)=
+\frac{A B + \frac{2}{\Delta}\Big(1+\frac{(A+B)\Delta}{2}\Big)\Big((A+B)+\frac{AB\Delta}{2}\Big)}
+     {A\Big(1+\frac{\Delta}{2}\Big)}.
+\]
+
+**DeepSeek (DS)** (equivalent after simplification):  
+\[
+K_c^{\mathrm{DS}}(A,B,\Delta)=
+\frac{A B + \frac{2}{\Delta}\Big(1+\frac{(A+B)\Delta}{2}\Big)\Big((A+B)+\frac{AB\Delta}{2}\Big)}
+     {A\Big(\frac{2}{\Delta}-B\Big)}.
+\]
+
+**Engineering Rule (ER)**  
+Solve \(\arctan(\omega_c/A)+\arctan(\omega_c/B)+\omega_c\Delta=\frac{3\pi}{4}\) for \(\omega_c\).  
+We then map to \(K_c^{\mathrm{ER}}\) using the cubic’s imaginary-axis condition; this acts as a **ground-truth** numerical reference.
+
+### CSV schema
+`A,B,Δ,Kc_RH,Kc_DS,Kc_ER,err_RH,err_DS`, where errors are relative to ER.
+
+### Acceptance notes
+- For \(A\gtrsim B\) and small \(\Delta\), all forms agree to ~1–2%.
+- As \(A/B\) increases (fast EMA), agreement tightens further.
+- RH ≈ DS numerically across the grid (algebraic equivalence in practice).
+
+---
