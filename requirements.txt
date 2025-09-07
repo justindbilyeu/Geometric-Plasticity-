@@ -1,0 +1,12 @@
+# requirements.txt
+
+# Core numerics & signal processing
+numpy>=1.24,<3
+scipy>=1.10,<2
+pandas>=1.5,<3
+
+# Plotting
+matplotlib>=3.7,<4
+
+# Testing
+pytest>=7,<9
